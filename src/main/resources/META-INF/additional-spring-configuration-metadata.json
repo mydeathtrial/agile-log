@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "agile.log.enabled",
+      "type": "java.lang.Boolean",
+      "description": "日志拦截器",
+      "defaultValue": true
+    }
+  ]
+}
