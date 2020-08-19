@@ -1,3 +1,5 @@
 .idea\
 info.log
 agile-log.iml
+logs
+target
