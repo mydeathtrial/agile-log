@@ -22,15 +22,18 @@ public class TestController {
 
     @ResponseBody
     @RequestMapping("/test1")
-    public WebAsyncTask<ModelAndView> test1(int a) {
-        return new WebAsyncTask<>(30000, ()->{
+    public WebAsyncTask<Object> test1(int a) {
+        return new WebAsyncTask<>(30000, () -> {
             ModelAndView modelAndView = new ModelAndView();
             modelAndView.setView(new FastJsonJsonView());
-            modelAndView.addObject("a","输出");
-            if(a==1){
+            modelAndView.addObject("a", "输出");
+            if (a == 1) {
                 RuntimeException e = new RuntimeException("错了");
-                logger.error("出错了",e);
+                logger.error("出错了", e);
                 throw e;
+            }
+            if (a == 2) {
+                return "asds";
             }
             logger.info("访问了1");
             logger.error("我是错误日志");
@@ -43,7 +46,7 @@ public class TestController {
     public ModelAndView test2(int a) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setView(new FastJsonJsonView());
-        modelAndView.addObject("a","输出");
+        modelAndView.addObject("a", "输出");
         logger.info("访问了2");
         logger.error("我是错误日志");
         return modelAndView;

@@ -14,18 +14,18 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 1.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = App.class,webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = App.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class Test {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
     @org.junit.Test
-    public void test1(){
-        testRestTemplate.getForObject("/test1?a=12",String.class);
+    public void test1() {
+        testRestTemplate.getForObject("/test1?a=12", String.class);
     }
 
     @org.junit.Test
-    public void test2(){
-        testRestTemplate.getForObject("/test2?a=12",String.class);
+    public void test2() {
+        testRestTemplate.getForObject("/test2?a=12", String.class);
     }
 }

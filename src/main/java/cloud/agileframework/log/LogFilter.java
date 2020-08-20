@@ -24,48 +24,73 @@ import java.io.IOException;
 public class LogFilter extends AbstractRequestLoggingFilter {
 
     protected static final String AGILE_BUSINESS_LOG = "$AGILE_BUSINESS_LOG";
-    private static final ThreadLocal<HttpServletResponse> THREAD_LOCAL = new ThreadLocal<>();
+
+    private String is;
+
+    public String getIs() {
+        return is;
+    }
+
+    public void setIs(String is) {
+        this.is = is;
+    }
 
     @Override
     protected boolean shouldLog(HttpServletRequest request) {
-//        getEnvironment()
-        return logger.isDebugEnabled();
+        return "true".equalsIgnoreCase(is);
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (!(request instanceof RequestWrapper)) {
-            request = new RequestWrapper(request);
+        boolean shouldLog = shouldLog(request);
+        if (!shouldLog) {
+            filterChain.doFilter(request, response);
+            return;
         }
+        boolean isFirstRequest = !isAsyncDispatch(request);
+        HttpServletRequest requestToUse = request;
+        HttpServletResponse responseToUse = response;
+
+        if (isFirstRequest && !(request instanceof RequestWrapper)) {
+            requestToUse = new RequestWrapper(request);
+            beforeRequest((RequestWrapper) requestToUse);
+        }
+
         if (!(response instanceof ContentCachingResponseWrapper)) {
-            response = new ContentCachingResponseWrapper(response);
+            responseToUse = new ContentCachingResponseWrapper(response);
         }
-        THREAD_LOCAL.set(response);
-        super.doFilterInternal(request, response, filterChain);
+
+
+        try {
+            filterChain.doFilter(requestToUse, responseToUse);
+        } finally {
+
+            if (!isAsyncStarted(request)) {
+                afterRequest((RequestWrapper) requestToUse, (ContentCachingResponseWrapper) responseToUse);
+            }
+            ((ContentCachingResponseWrapper) responseToUse).copyBodyToResponse();
+        }
     }
 
-    @Override
-    protected void beforeRequest(HttpServletRequest request, String message) {
+    protected void beforeRequest(RequestWrapper request) {
         request = WebUtils.getNativeRequest(request, RequestWrapper.class);
 
         if (request != null) {
             request.setAttribute(AGILE_BUSINESS_LOG, ExecutionInfo.builder()
                     .ip(ServletUtil.getRequestIP(request))
                     .url(request.getMethod() + ":" + request.getRequestURI())
-                    .inParam(((RequestWrapper) request).getInParam())
+                    .inParam(request.getInParam())
                     .startTime(System.currentTimeMillis())
                     .username(request.getRemoteUser())
             );
         }
     }
 
-    @Override
-    protected void afterRequest(HttpServletRequest request, String message) {
+    protected void afterRequest(RequestWrapper request, ContentCachingResponseWrapper response) {
         Object currentInfo = request.getAttribute(AGILE_BUSINESS_LOG);
         if (!(currentInfo instanceof ExecutionInfo.Builder)) {
             return;
         }
-        ContentCachingResponseWrapper response = WebUtils.getNativeResponse(THREAD_LOCAL.get(), ContentCachingResponseWrapper.class);
         if (response != null) {
             ExecutionInfo info = ((ExecutionInfo.Builder) currentInfo)
                     .outParam(new String(response.getContentAsByteArray()))
@@ -74,13 +99,14 @@ public class LogFilter extends AbstractRequestLoggingFilter {
             //调用钩子函数
             ObjectProvider<ExecutionObjectProvider> provider = BeanUtil.getApplicationContext().getBeanProvider(ExecutionObjectProvider.class);
             provider.orderedStream().forEach(s -> s.pass(info));
-
-            try {
-                response.copyBodyToResponse();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
-        THREAD_LOCAL.remove();
+    }
+
+    @Override
+    protected void beforeRequest(HttpServletRequest request, String message) {
+    }
+
+    @Override
+    protected void afterRequest(HttpServletRequest request, String message) {
     }
 }

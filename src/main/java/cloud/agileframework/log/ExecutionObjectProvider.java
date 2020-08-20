@@ -10,6 +10,7 @@ package cloud.agileframework.log;
 public interface ExecutionObjectProvider {
     /**
      * 请求执行过程，可以用于记录操作日志
+     *
      * @param executionInfo 执行信息
      */
     void pass(ExecutionInfo executionInfo);

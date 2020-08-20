@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-cloud.agileframework.log.config.BusinessAutoConfiguration
+cloud.agileframework.log.config.LoggerAutoConfiguration
