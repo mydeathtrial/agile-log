@@ -1,8 +1,8 @@
 package cloud.agileframework.log;
 
+import cloud.agileframework.spring.util.BeanUtil;
 import cloud.agileframework.spring.util.RequestWrapper;
 import cloud.agileframework.spring.util.ServletUtil;
-import cloud.agileframework.spring.util.spring.BeanUtil;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.filter.AbstractRequestLoggingFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
