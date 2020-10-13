@@ -1,0 +1,10 @@
+agile:
+  log:
+    enabled: true
+    operation:
+      enabled: false
+logging:
+  level:
+    cloud:
+      agileframework:
+        log: DEBUG
