@@ -49,27 +49,38 @@ public class LogFilter extends AbstractRequestLoggingFilter {
         }
         boolean isFirstRequest = !isAsyncDispatch(request);
         HttpServletRequest requestToUse = request;
-        HttpServletResponse responseToUse = response;
+        HttpServletResponse responseToUse;
 
         if (isFirstRequest && !(request instanceof RequestWrapper)) {
             requestToUse = new RequestWrapper(request);
             beforeRequest((RequestWrapper) requestToUse);
         }
 
-        if (!(response instanceof ContentCachingResponseWrapper)) {
-            responseToUse = new ContentCachingResponseWrapper(response);
-        }
-
+        responseToUse = init(response);
 
         try {
             filterChain.doFilter(requestToUse, responseToUse);
         } finally {
 
             if (!isAsyncStarted(request)) {
-                afterRequest((RequestWrapper) requestToUse, (ContentCachingResponseWrapper) responseToUse);
+                afterRequest(requestToUse, responseToUse);
             }
-            ((ContentCachingResponseWrapper) responseToUse).copyBodyToResponse();
+            ContentCachingResponseWrapper nativeResponse = WebUtils.getNativeResponse(responseToUse, ContentCachingResponseWrapper.class);
+            if(nativeResponse != null){
+                nativeResponse.copyBodyToResponse();
+            }
         }
+    }
+
+    /**
+     * 如果没包装过，新增包装
+     */
+    private HttpServletResponse init(HttpServletResponse response) {
+        ContentCachingResponseWrapper temp = WebUtils.getNativeResponse(response, ContentCachingResponseWrapper.class);
+        if (temp == null) {
+            return new ContentCachingResponseWrapper(response);
+        }
+        return response;
     }
 
     protected void beforeRequest(RequestWrapper request) {
@@ -86,14 +97,15 @@ public class LogFilter extends AbstractRequestLoggingFilter {
         }
     }
 
-    protected void afterRequest(RequestWrapper request, ContentCachingResponseWrapper response) {
+    protected void afterRequest(HttpServletRequest request, HttpServletResponse response) {
         Object currentInfo = request.getAttribute(AGILE_BUSINESS_LOG);
         if (!(currentInfo instanceof ExecutionInfo.Builder)) {
             return;
         }
-        if (response != null) {
+        ContentCachingResponseWrapper contentCachingResponseWrapper = WebUtils.getNativeResponse(response, ContentCachingResponseWrapper.class);
+        if (contentCachingResponseWrapper != null) {
             ExecutionInfo info = ((ExecutionInfo.Builder) currentInfo)
-                    .outParam(new String(response.getContentAsByteArray()))
+                    .outParam(new String(contentCachingResponseWrapper.getContentAsByteArray()))
                     .endTime(System.currentTimeMillis()).build();
 
             //调用钩子函数

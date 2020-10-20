@@ -19,8 +19,18 @@ public class PrintLogProvider implements ExecutionObjectProvider {
         logger.debug("IP  地址: {}", executionInfo.getIp());
         logger.debug("URL 地址: {}", executionInfo.getUrl());
         logger.debug("帐    号: {}", executionInfo.getUsername());
-        logger.debug("入    参: {}", JSON.toJSONString(executionInfo.getInParam()));
-        logger.debug("出    参: {}", JSON.parse(executionInfo.getOutParam()));
+        try {
+            logger.debug("入    参: {}", JSON.toJSONString(executionInfo.getInParam()));
+        } catch (Exception e) {
+            logger.debug("入    参: {}", "非Json数据");
+        }
+
+        try {
+            logger.debug("出    参: {}", JSON.parse(executionInfo.getOutParam()));
+        } catch (Exception e) {
+            logger.debug("出    参: {}", "非Json数据");
+        }
+
         logger.debug("耗    时: {}", (executionInfo.getEndTime() - executionInfo.getStartTime()) + "ms");
         logger.debug("----------------------------------------------------------");
     }
