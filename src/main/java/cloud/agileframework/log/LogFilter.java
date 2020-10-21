@@ -2,6 +2,7 @@ package cloud.agileframework.log;
 
 import cloud.agileframework.spring.util.BeanUtil;
 import cloud.agileframework.spring.util.RequestWrapper;
+import cloud.agileframework.spring.util.SecurityUtil;
 import cloud.agileframework.spring.util.ServletUtil;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.filter.AbstractRequestLoggingFilter;
@@ -92,7 +93,6 @@ public class LogFilter extends AbstractRequestLoggingFilter {
                     .url(request.getMethod() + ":" + request.getRequestURI())
                     .inParam(request.getInParam())
                     .startTime(System.currentTimeMillis())
-                    .username(request.getRemoteUser())
             );
         }
     }
@@ -106,7 +106,9 @@ public class LogFilter extends AbstractRequestLoggingFilter {
         if (contentCachingResponseWrapper != null) {
             ExecutionInfo info = ((ExecutionInfo.Builder) currentInfo)
                     .outParam(new String(contentCachingResponseWrapper.getContentAsByteArray()))
-                    .endTime(System.currentTimeMillis()).build();
+                    .endTime(System.currentTimeMillis())
+                    .username(SecurityUtil.currentUser().getUsername())
+                    .build();
 
             //调用钩子函数
             ObjectProvider<ExecutionObjectProvider> provider = BeanUtil.getApplicationContext().getBeanProvider(ExecutionObjectProvider.class);
