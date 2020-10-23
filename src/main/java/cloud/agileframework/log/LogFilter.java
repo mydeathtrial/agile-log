@@ -107,7 +107,7 @@ public class LogFilter extends AbstractRequestLoggingFilter {
             ExecutionInfo info = ((ExecutionInfo.Builder) currentInfo)
                     .outParam(new String(contentCachingResponseWrapper.getContentAsByteArray()))
                     .endTime(System.currentTimeMillis())
-                    .username(SecurityUtil.currentUser().getUsername())
+                    .username(SecurityUtil.currentUsername())
                     .build();
 
             //调用钩子函数
