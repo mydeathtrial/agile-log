@@ -1,5 +1,6 @@
 package cloud.agileframework.log;
 
+import cloud.agileframework.common.constant.Constant;
 import cloud.agileframework.spring.util.BeanUtil;
 import cloud.agileframework.spring.util.RequestWrapper;
 import cloud.agileframework.spring.util.SecurityUtil;
@@ -67,7 +68,7 @@ public class LogFilter extends AbstractRequestLoggingFilter {
                 afterRequest(requestToUse, responseToUse);
             }
             ContentCachingResponseWrapper nativeResponse = WebUtils.getNativeResponse(responseToUse, ContentCachingResponseWrapper.class);
-            if(nativeResponse != null){
+            if (nativeResponse != null) {
                 nativeResponse.copyBodyToResponse();
             }
         }
@@ -90,7 +91,8 @@ public class LogFilter extends AbstractRequestLoggingFilter {
         if (request != null) {
             request.setAttribute(AGILE_BUSINESS_LOG, ExecutionInfo.builder()
                     .ip(ServletUtil.getRequestIP(request))
-                    .url(request.getMethod() + ":" + request.getRequestURI())
+                    .method(request.getMethod())
+                    .url(request.getRequestURI())
                     .inParam(request.getInParam())
                     .startTime(System.currentTimeMillis())
             );
@@ -104,10 +106,23 @@ public class LogFilter extends AbstractRequestLoggingFilter {
         }
         ContentCachingResponseWrapper contentCachingResponseWrapper = WebUtils.getNativeResponse(response, ContentCachingResponseWrapper.class);
         if (contentCachingResponseWrapper != null) {
+            Exception e = (Exception) request.getAttribute(WebUtils.ERROR_EXCEPTION_TYPE_ATTRIBUTE);
+            if (e == null) {
+                e = (Exception) request.getAttribute(Constant.RequestAttributeAbout.ERROR_EXCEPTION);
+            }
+
+
+            String username = null;
+            try {
+                Class.forName("org.springframework.security.core.userdetails.UserDetails");
+                username = SecurityUtil.currentUsername();
+            } catch (Exception ignored) {
+            }
             ExecutionInfo info = ((ExecutionInfo.Builder) currentInfo)
                     .outParam(new String(contentCachingResponseWrapper.getContentAsByteArray()))
                     .endTime(System.currentTimeMillis())
-                    .username(SecurityUtil.currentUsername())
+                    .username(username)
+                    .e(e)
                     .build();
 
             //调用钩子函数

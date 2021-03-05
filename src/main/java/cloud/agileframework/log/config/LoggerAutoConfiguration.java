@@ -23,7 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @version 1.0
  * @since 1.0
  */
-@ConditionalOnProperty(value = "enabled", prefix = "agile.log")
+@ConditionalOnProperty(value = "enabled", prefix = "agile.log", matchIfMissing = true)
 @Configuration
 public class LoggerAutoConfiguration implements WebMvcConfigurer {
     private final Logger logger = LoggerFactory.getLogger(getClass());

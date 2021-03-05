@@ -12,35 +12,45 @@ import java.util.Map;
 public class ExecutionInfo {
     private static final String ANONYMOUS = "anonymous";
     private final String ip;
+    private final String method;
     private final String url;
     private final String username;
     private final long startTime;
     private final long endTime;
     private final Map<String, Object> inParam;
     private final String outParam;
+    private final Exception e;
 
     public ExecutionInfo(Builder builder) {
         ip = builder.ip;
+        method = builder.method;
         url = builder.url;
         username = builder.username;
         startTime = builder.startTime;
         endTime = builder.endTime;
         inParam = builder.inParam;
         outParam = builder.outParam;
-
+        e = builder.e;
     }
 
     public static class Builder {
         private String ip;
+        private String method;
         private String url;
         private long startTime;
         private String username;
         private long endTime;
         private Map<String, Object> inParam;
         private String outParam;
+        private Exception e;
 
         public Builder ip(String ip) {
             this.ip = ip;
+            return this;
+        }
+
+        public Builder method(String method) {
+            this.method = method;
             return this;
         }
 
@@ -74,8 +84,17 @@ public class ExecutionInfo {
             return this;
         }
 
+        public Builder e(Exception e) {
+            this.e = e;
+            return this;
+        }
+
         public String getIp() {
             return ip;
+        }
+
+        public String getMethod() {
+            return method;
         }
 
         public String getUrl() {
@@ -102,6 +121,10 @@ public class ExecutionInfo {
             return outParam;
         }
 
+        public Exception getE() {
+            return e;
+        }
+
         public ExecutionInfo build() {
             return new ExecutionInfo(this);
         }
@@ -113,6 +136,10 @@ public class ExecutionInfo {
 
     public String getIp() {
         return ip;
+    }
+
+    public String getMethod() {
+        return method;
     }
 
     public String getUrl() {
@@ -135,6 +162,10 @@ public class ExecutionInfo {
         return inParam;
     }
 
+    public Exception getE() {
+        return e;
+    }
+
     public String getOutParam() {
         return outParam;
     }
@@ -143,12 +174,14 @@ public class ExecutionInfo {
     public String toString() {
         return "ExecutionInfo{" +
                 "ip='" + ip + '\'' +
+                ", method='" + method + '\'' +
                 ", url='" + url + '\'' +
                 ", username='" + username + '\'' +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", inParam=" + inParam +
                 ", outParam='" + outParam + '\'' +
+                ", e=" + e +
                 '}';
     }
 }
