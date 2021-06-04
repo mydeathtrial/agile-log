@@ -8,7 +8,7 @@ import org.springframework.web.method.HandlerMethod;
 /**
  * @author 佟盟
  * 日期 2020/8/00020 10:16
- * 描述 TODO
+ * 描述 记录操作日志
  * @version 1.0
  * @since 1.0
  */
@@ -20,6 +20,7 @@ public class RecordOperationProvider implements ExecutionObjectProvider {
 
     @Override
     public void pass(ExecutionInfo executionInfo) {
+        // 提取执行方法
         HandlerMethod handlerMethod = MappingUtil.matching(ServletUtil.getCurrentRequest());
 
         recordOperationManager.record(handlerMethod, executionInfo);

@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author 佟盟
  * 日期 2020/8/00018 18:11
- * 描述 TODO
+ * 描述 控制台日志提供者
  * @version 1.0
  * @since 1.0
  */
