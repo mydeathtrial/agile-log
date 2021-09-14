@@ -11,7 +11,7 @@ import org.springframework.web.method.HandlerMethod;
  */
 public interface RecordOperationManager {
     /**
-     * 记录操纵
+     * 记录操作日志
      *
      * @param handlerMethod 请求的目标方法
      * @param executionInfo 执行信息
