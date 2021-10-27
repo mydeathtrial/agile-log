@@ -108,37 +108,4 @@ public class RunLogTest {
         System.out.println(parser.parseExpression("#list[1]").getValue(ctx));
         System.out.println(parser.parseExpression("#list").getValue(ctx));
     }
-
-    @Test
-    public void test4(){
-        //将实体类序列化成 map (HashMap允许加入null值)
-        //SerializerFeature.WriteMapNullValue ：序列化策略-》允许写入null值
-        HashMap<String,Object> HashMap = JSON.parseObject(JSON.toJSONString(role, SerializerFeature.WriteMapNullValue),HashMap.class);
-        //自定义模板   因为正则用的{{**}}进行匹配，所以模板就写成例如:{{areaName}}
-        String nameStr = "您所管理的区县中区县为{ id }，企业名为:\\{roleName\\}的企业,下次上传{xmmc}时间为{tjDate}，请尽快处理!";
-        System.err.println("序列化成map的值:    "+HashMap);
-        //进行解析  注意：解析的时候尽保证 map中的value为string行，不然解析会报错
-        String result =  renderString(nameStr,HashMap);
-        System.err.println("模板解析后的值:    "+result);
-    }
-
-    public static String renderString(String content, Map<String,Object> map){
-        Set<Map.Entry<String,Object>> sets = map.entrySet();
-        try{
-            for(Map.Entry<String,Object> entry : sets){
-                //定义正则
-                String regex = "\\{" + entry.getKey() + "\\}";
-                //创建匹配模式
-                Pattern pattern = Pattern.compile(regex);
-                //将要匹配的内容加入进行匹配的
-                Matcher matcher = pattern.matcher(content);
-                //将匹配的结果替换为map的value值
-                content = matcher.replaceAll(entry.getValue() == null ? "null" : String.valueOf(entry.getValue()));
-            }
-        }catch (ClassCastException e){
-            new ClassCastException("格式错误，模板解析时map都应为string类型");
-            return "格式错误，模板解析时map中的value都应为string类型";
-        }
-        return content;
-    }
 }
