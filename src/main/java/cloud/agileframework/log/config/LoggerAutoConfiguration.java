@@ -1,12 +1,12 @@
 package cloud.agileframework.log.config;
 
-import cloud.agileframework.common.util.properties.PropertiesUtil;
 import cloud.agileframework.log.LogFilter;
 import cloud.agileframework.log.PrintLogProvider;
 import cloud.agileframework.log.RecordOperationManager;
 import cloud.agileframework.log.RecordOperationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,13 +28,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class LoggerAutoConfiguration implements WebMvcConfigurer {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Value("${agile.log.enabled:false}")
+    private Boolean enabled;
+
     @Bean
     @ConditionalOnClass(LogFilter.class)
     public FilterRegistrationBean<LogFilter> logFilter() {
         FilterRegistrationBean<LogFilter> corsFilter = new FilterRegistrationBean<>();
         corsFilter.setFilter(new LogFilter());
         corsFilter.addUrlPatterns("/*");
-        corsFilter.addInitParameter("is", PropertiesUtil.getProperty("agile.log.enabled", String.class, "false"));
+        corsFilter.addInitParameter("is", enabled ? "true" : "false");
         return corsFilter;
     }
 
