@@ -1,7 +1,5 @@
 package com.agile;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +13,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author 佟盟
@@ -48,8 +40,9 @@ public class RunLogTest {
 
     @Autowired
     private Role2 role;
+
     @Test
-    public void test3(){
+    public void test3() {
 //        //表达式解析器
 //        ExpressionParser parser = new SpelExpressionParser();
 //        // 设置表达式
@@ -73,7 +66,6 @@ public class RunLogTest {
 //        System.out.println(abc);
 
 
-
         //表达式解析器
         ExpressionParser parser = new SpelExpressionParser();
         //创建角色对象
@@ -84,7 +76,7 @@ public class RunLogTest {
         //变量环境类，并且将角色对象role作为其根节点
         EvaluationContext ctx = new StandardEvaluationContext(role);
 
-        ctx.setVariable("tudou",role);
+        ctx.setVariable("tudou", role);
         //变量环境类操作根节点
         exp.setValue(ctx, "new_note");
 
