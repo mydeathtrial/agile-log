@@ -5,12 +5,6 @@
       "type": "java.lang.Boolean",
       "description": "日志拦截器.",
       "defaultValue": true
-    },
-    {
-      "name": "agile.log.operation.enabled",
-      "type": "java.lang.Boolean",
-      "description": "操作日志.",
-      "defaultValue": false
     }
   ]
 }
