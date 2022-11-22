@@ -119,7 +119,7 @@ public class LogFilter extends AbstractRequestLoggingFilter {
             } catch (Exception ignored) {
             }
             ExecutionInfo info = ((ExecutionInfo.Builder) currentInfo)
-                    .outParam(new String(contentCachingResponseWrapper.getContentAsByteArray()))
+//                    .outParam(new String(contentCachingResponseWrapper.getContentAsByteArray()))
                     .endTime(System.currentTimeMillis())
                     .username(username)
                     .e(e)
